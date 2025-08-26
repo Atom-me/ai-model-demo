@@ -125,7 +125,7 @@ def single_test(platform: str, message: str, stream: bool = False):
 
 def main():
     parser = argparse.ArgumentParser(description='单个AI平台测试工具')
-    parser.add_argument('platform', choices=['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix'], 
+    parser.add_argument('platform', choices=['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix', 'azure'], 
                        help='选择要测试的平台')
     parser.add_argument('-m', '--message', type=str, 
                        help='测试消息 (如果不提供则进入交互模式)')
@@ -137,12 +137,16 @@ def main():
     args = parser.parse_args()
     
     # 检查API密钥是否配置
-    key_name = f"{args.platform.upper()}_API_KEY"
     if args.platform == 'baidu':
         if not (os.getenv('BAIDU_API_KEY') and os.getenv('BAIDU_SECRET_KEY')):
             print(f"❌ {args.platform} 的API密钥未配置，请检查.env文件")
             return
+    elif args.platform == 'azure':
+        if not (os.getenv('AZURE_API_KEY') and os.getenv('AZURE_ENDPOINT')):
+            print(f"❌ {args.platform} 的API密钥和端点未配置，请检查.env文件")
+            return
     else:
+        key_name = f"{args.platform.upper()}_API_KEY"
         if not os.getenv(key_name):
             print(f"❌ {args.platform} 的API密钥未配置，请检查.env文件")
             return

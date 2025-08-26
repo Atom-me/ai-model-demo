@@ -6,6 +6,7 @@ from .openai import OpenAIClient
 from .zhipu import ZhipuClient
 from .baidu import BaiduClient
 from .aihubmix import AIHubMixClient
+from .azure import AzureClient
 
 class AIModelManager:
     """AI模型统一管理器"""
@@ -18,7 +19,7 @@ class AIModelManager:
         获取指定平台的客户端
         
         Args:
-            platform: 平台名称 ('qwen', 'openai', 'zhipu', 'baidu', 'aihubmix')
+            platform: 平台名称 ('qwen', 'openai', 'zhipu', 'baidu', 'aihubmix', 'azure')
             
         Returns:
             对应平台的客户端实例
@@ -34,6 +35,8 @@ class AIModelManager:
                 self.clients[platform] = BaiduClient()
             elif platform == 'aihubmix':
                 self.clients[platform] = AIHubMixClient()
+            elif platform == 'azure':
+                self.clients[platform] = AzureClient()
             else:
                 raise ValueError(f"不支持的平台: {platform}")
         
@@ -75,5 +78,6 @@ __all__ = [
     'ZhipuClient', 
     'BaiduClient', 
     'AIHubMixClient',
+    'AzureClient',
     'AIModelManager'
 ]

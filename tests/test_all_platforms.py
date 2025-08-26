@@ -128,7 +128,7 @@ def main():
     print("🚀 开始测试所有AI平台...")
     
     # 支持的平台列表
-    platforms = ['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix']
+    platforms = ['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix', 'azure']
     
     # 检查哪些平台有配置的API密钥
     available_platforms = []
@@ -137,6 +137,10 @@ def main():
         if platform == 'baidu':
             # 百度需要两个密钥
             if os.getenv('BAIDU_API_KEY') and os.getenv('BAIDU_SECRET_KEY'):
+                available_platforms.append(platform)
+        elif platform == 'azure':
+            # Azure需要API密钥和端点
+            if os.getenv('AZURE_API_KEY') and os.getenv('AZURE_ENDPOINT'):
                 available_platforms.append(platform)
         else:
             if os.getenv(key_name):

@@ -9,6 +9,7 @@
 - **智谱AI (ZhipuAI)** - GLM系列模型  
 - **百度千帆 (Baidu Qianfan)** - 文心一言等模型
 - **AIHubMix** - 第三方AI聚合平台
+- **Azure OpenAI** - 微软云AI服务
 
 ## 项目结构
 
@@ -32,6 +33,9 @@ ai-model-demo/
 │   ├── aihubmix/         # AIHubMix客户端
 │   │   ├── __init__.py
 │   │   └── client.py
+│   ├── azure/            # Azure OpenAI客户端
+│   │   ├── __init__.py
+│   │   └── client.py
 │   └── __init__.py       # 统一管理器
 ├── tests/                # 测试和查询脚本
 │   ├── test_all_platforms.py      # 所有平台测试
@@ -41,7 +45,8 @@ ai-model-demo/
 │   ├── get_openai_models.py       # OpenAI模型查询
 │   ├── get_zhipu_models.py        # 智谱AI模型查询
 │   ├── get_baidu_models.py        # 百度千帆模型查询
-│   └── get_aihubmix_models.py     # AIHubMix模型查询
+│   ├── get_aihubmix_models.py     # AIHubMix模型查询
+│   └── get_azure_models.py        # Azure OpenAI模型查询
 ├── main.py              # 主程序入口
 ├── pyproject.toml       # uv项目配置
 ├── uv.lock             # 依赖锁定文件
@@ -96,6 +101,15 @@ BAIDU_SECRET_KEY=your_baidu_secret_key
 # 注意：第三方平台需要配置API URL，因为端点不固定
 AIHUBMIX_API_KEY=your_aihubmix_api_key
 AIHUBMIX_BASE_URL=https://aihubmix.com/v1
+
+# Azure OpenAI配置 (微软云平台)
+# 注意：Azure OpenAI需要特殊配置三个参数
+# 1. API密钥：从Azure门户的OpenAI资源中获取
+# 2. 端点：Azure资源的完整URL
+# 3. API版本：与Azure服务兼容的版本号
+AZURE_API_KEY=your_azure_api_key
+AZURE_ENDPOINT=https://your-resource-name.openai.azure.com/
+AZURE_API_VERSION=2024-02-15-preview
 ```
 
 ## 使用方法
@@ -130,7 +144,7 @@ python tests/test_single_platform.py qwen -m "使用vue写一个简单的登录�
 python tests/test_single_platform.py zhipu -i
 ```
 
-支持的平台参数：`qwen`, `openai`, `zhipu`, `baidu`, `aihubmix`
+支持的平台参数：`qwen`, `openai`, `zhipu`, `baidu`, `aihubmix`, `azure`
 
 ### 4. 代码生成测试
 
@@ -178,6 +192,9 @@ python tests/get_baidu_models.py
 
 # AIHubMix模型查询
 python tests/get_aihubmix_models.py
+
+# Azure OpenAI模型查询
+python tests/get_azure_models.py
 ```
 
 ### 6. 编程使用
@@ -268,6 +285,14 @@ for chunk in manager.chat_stream('qwen', '写一首诗'):
   - 默认模型：`gpt-4o`
   - **智能参数支持**：自动检测模型类型，对GPT-5等新模型使用`max_completion_tokens`参数
 
+- **Azure OpenAI**: 
+  - 微软云AI服务，需要Azure订阅
+  - **特殊配置要求**：API Key + Endpoint + API Version
+  - 使用"部署名称"而不是模型名称
+  - 需要在Azure门户中手动创建部署
+  - 默认部署：`gpt-4o-deployment`
+  - 支持企业级安全和合规性
+
 ### Token参数说明
 
 **`max_tokens` 参数作用：**
@@ -298,6 +323,15 @@ for chunk in manager.chat_stream('qwen', '写一首诗'):
 **解决方法:** 
 - 创建`.env`文件：`touch .env`
 - 在`.env`文件中配置正确的API密钥（参考上面的配置示例）
+
+**Azure OpenAI配置获取方法：**
+1. 登录 [Azure门户](https://portal.azure.com/)
+2. 创建或找到OpenAI资源
+3. 在"密钥和端点"页面获取：
+   - API密钥：`AZURE_API_KEY`
+   - 端点：`AZURE_ENDPOINT` 
+   - API版本：通常使用 `2024-02-15-preview`
+4. 在"部署"页面创建模型部署，获取部署名称
 
 ### 2. 导入错误
 

@@ -11,19 +11,22 @@ def main():
     load_dotenv()
     
     print("🚀 AI模型对接Demo")
-    print("支持平台: OpenAI, 通义千问, 智谱AI, 百度千帆, AIHubMix")
+    print("支持平台: OpenAI, 通义千问, 智谱AI, 百度千帆, AIHubMix, Azure OpenAI")
     print("-" * 50)
     
     # 检查可用平台
-    platforms = ['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix']
+    platforms = ['qwen', 'openai', 'zhipu', 'baidu', 'aihubmix', 'azure']
     available_platforms = []
     
     for platform in platforms:
-        key_name = f"{platform.upper()}_API_KEY"
         if platform == 'baidu':
             if os.getenv('BAIDU_API_KEY') and os.getenv('BAIDU_SECRET_KEY'):
                 available_platforms.append(platform)
+        elif platform == 'azure':
+            if os.getenv('AZURE_API_KEY') and os.getenv('AZURE_ENDPOINT'):
+                available_platforms.append(platform)
         else:
+            key_name = f"{platform.upper()}_API_KEY"
             if os.getenv(key_name):
                 available_platforms.append(platform)
     
