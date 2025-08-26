@@ -36,6 +36,7 @@ ai-model-demo/
 ├── tests/                # 测试和查询脚本
 │   ├── test_all_platforms.py      # 所有平台测试
 │   ├── test_single_platform.py    # 单平台测试
+│   ├── test_code_generation.py    # 代码生成专项测试
 │   ├── get_qwen_models.py         # 通义千问模型查询
 │   ├── get_openai_models.py       # OpenAI模型查询
 │   ├── get_zhipu_models.py        # 智谱AI模型查询
@@ -131,7 +132,34 @@ python tests/test_single_platform.py zhipu -i
 
 支持的平台参数：`qwen`, `openai`, `zhipu`, `baidu`, `aihubmix`
 
-### 4. 查询平台支持的模型列表
+### 4. 代码生成测试
+
+专门测试AI模型的代码生成能力：
+
+```bash
+# AIHubMix代码生成测试 (Vue.js登录表单)
+python tests/test_code_generation.py
+```
+
+**测试内容：**
+- 🎯 Vue.js登录表单生成
+- 📊 详细性能统计
+- 🔍 代码质量分析
+- 🤖 支持多种模型切换
+
+**支持的模型：**
+- `gpt-4o` - OpenAI最新模型（默认）
+- `gpt-5` - GPT-5模型（需要特殊配置）
+- `gpt-4-turbo` - GPT-4 Turbo
+- `claude-3-sonnet` - Claude 3 Sonnet
+
+**修改测试模型：**
+编辑 `tests/test_code_generation.py` 第65行：
+```python
+model_to_use = "gpt-5"  # 改为你想测试的模型
+```
+
+### 5. 查询平台支持的模型列表
 
 #### 各平台模型列表查询脚本
 
@@ -152,7 +180,7 @@ python tests/get_baidu_models.py
 python tests/get_aihubmix_models.py
 ```
 
-### 5. 编程使用
+### 6. 编程使用
 
 ```python
 from platforms import AIModelManager
@@ -213,26 +241,51 @@ for chunk in manager.chat_stream('qwen', '写一首诗'):
   - 支持`system_prompt`参数
   - 可配置自定义`base_url`（支持代理服务）
   - 需要API Key
+  - 默认模型：`gpt-4o`
 
 - **通义千问**: 
   - 使用阿里云DashScope API
   - API端点内置在SDK中：`https://dashscope.aliyuncs.com/api/v1`
   - 只需要API Key，无需配置URL
+  - 默认模型：`qwen-turbo`
 
 - **智谱AI**: 
   - 支持GLM系列模型
   - API端点内置在SDK中
   - 只需要API Key，无需配置URL
+  - 默认模型：`glm-4`
 
 - **百度千帆**: 
   - 支持文心一言等百度模型
   - 需要API Key和Secret Key两个密钥
   - API端点内置在SDK中
+  - 默认模型：`ernie-bot-turbo`
 
 - **AIHubMix**: 
   - 兼容OpenAI API格式
   - 第三方聚合平台，需要配置`base_url`
   - 通常支持多种主流模型
+  - 默认模型：`gpt-4o`
+  - **智能参数支持**：自动检测模型类型，对GPT-5等新模型使用`max_completion_tokens`参数
+
+### Token参数说明
+
+**`max_tokens` 参数作用：**
+- 🎯 **控制回复长度**：限制AI生成内容的最大token数量
+- 💰 **节省费用**：多数AI服务按token计费
+- ⚡ **控制响应时间**：更少token = 更快响应
+- 📏 **Token换算**：1个token ≈ 0.75个英文单词 或 2-3个中文字符
+
+**不同场景建议值：**
+- **简单问答**：50-100 tokens
+- **对话聊天**：200-500 tokens
+- **代码生成**：500-2000 tokens
+- **文章创作**：1000-4000 tokens
+
+**模型兼容性：**
+- **传统模型**（GPT-4, GPT-3.5等）：使用`max_tokens`参数
+- **新模型**（GPT-5, o1等）：使用`max_completion_tokens`参数
+- **本项目**：AIHubMix客户端会自动检测模型类型并使用正确参数
 
 ## 故障排除
 
